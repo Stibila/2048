@@ -13,6 +13,91 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.setup();
 }
 
+GameManager.prototype.hideEverything = function () {
+  elements = [this.divOverlay, this.divPlayerCreator, this.divPlayerList];
+
+  elements.forEach(function(div)
+  {
+    if(div != null)
+    {
+      div.parentNode.removeChild(div);
+      div = null;
+    }
+  })
+}
+
+//Zobrazi overlay (prekryje stranku sedou farbou)
+GameManager.prototype.showOverlay = function () {
+  this.divOverlay = document.createElement('div');
+  document.body.insertBefore(this.divOverlay, document.body.firstChild);
+  this.divOverlay.style.background = 'rgba(0,0,0,0.7)';
+  this.divOverlay.style.position = 'fixed';
+  this.divOverlay.style.zIndex = '100';
+  this.divOverlay.style.top = '0';
+  this.divOverlay.style.bottom = '0';
+  this.divOverlay.style.left = '0';
+  this.divOverlay.style.right = '0';
+  this.divOverlay.name = "overlay";
+  this.divOverlay.id = 'overlay';
+  this.divOverlay.innerHTML = '';
+}
+
+//Zobrazi menu vytvorenia noveho hraca!
+GameManager.prototype.showPlayerCreator = function () {
+  this.showOverlay();
+  this.divPlayerCreator = document.createElement('div');
+  document.body.insertBefore(this.divPlayerCreator, document.body.firstChild);
+  this.divPlayerCreator.style.background = 'rgba(0,0,0,0.8)';
+  this.divPlayerCreator.style.borderRadius = '50px';
+  this.divPlayerCreator.style.position = 'absolute';
+  this.divPlayerCreator.style.marginLeft = 'auto';
+  this.divPlayerCreator.style.marginRight = 'auto';
+  this.divPlayerCreator.style.paddingTop = '50px';
+  this.divPlayerCreator.style.paddingBottom = '100px';
+  this.divPlayerCreator.style.zIndex = '101';
+  this.divPlayerCreator.style.top = '50px';
+  this.divPlayerCreator.style.left = '0';
+  this.divPlayerCreator.style.right = '0';
+  this.divPlayerCreator.style.width = '550px';
+  this.divPlayerCreator.style.textAlign = 'center';
+
+  this.divPlayerCreator.name = "CreatePlayer";
+  this.divPlayerCreator.id = 'CreatePlayer';
+
+  var ageOptions = '';
+//  var def = '';
+  for(i = 1; i < 100; i++)
+  {
+    if(i == 20) var sel = ' selected="selected"';
+    else var sel = '';
+    ageOptions += '<option '+sel+' value="'+i+'">'+i+'</option>'
+  }
+  this.divPlayerCreator.innerHTML = '<p><b title="Your name is sotred locally on your computer. It will not be send to our servers">Your name:</b><br /><input type="text" name="name" /></p>' +
+                                 '<p><b title="Your will be recorded for statistic purpose. Leave blank if you do not want us to know your age.">Your age:</b><br /><select name="age">'+ageOptions+'</select></p>' +
+                                 '<p><b title="How well you know 2048 game">Your experience with 2048:</b><br /><select name="experience"> <option value="0">What is 2048? Never hear of it before</option> <option value="1">I hear about it, but newer played it</option> <option value="2">I played it few times, but newer made it to 2048</option> <option value="3">I play it a lot, few times I successfully reached 2048</option> <option value="4">2048? It\'s 4096 or 8192 for me every time</option> </select></p>' +
+                                 '<button type="button" onSubmit="alert()">Crate new player</button>' +
+                                 '';
+} 
+
+GameManager.prototype.selectPlayer = function () {
+  //tu sa zobrazi vyber hraca
+  var players = this.storageManager.getPlayers();
+  if(players == null)
+  {
+    //show player creator page:
+    this.showPlayerCreator();
+  }
+  else if (players.length == 1)
+  {
+    //players obsahuje len jedneho hraca, okamzite ho pouzijeme
+  }
+  else
+  {
+    //players obsahuje viacero hracov, zobrazime moznost vyberu z nich
+  }
+}
+
+
 // Restart the game
 GameManager.prototype.restart = function () {
   this.storageManager.clearGameState();
@@ -33,6 +118,12 @@ GameManager.prototype.isGameTerminated = function () {
 
 // Set up the game
 GameManager.prototype.setup = function () {
+  this.hideEverything();
+  if(this.player == null) {
+    this.selectPlayer();
+    return;
+  }
+
   var previousState = this.storageManager.getGameState();
 
   // Reload the game from a previous game if present
