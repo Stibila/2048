@@ -19,9 +19,9 @@ window.fakeStorage = {
 };
 
 function LocalStorageManager() {
-  this.bestScoreKey     = "bestScore";
-  this.gameStateKey     = "gameState";
-  this.playersList      = "players";
+//  this.bestScoreKey     = "bestScore";
+//  this.gameStateKey     = "gameState";
+//  this.playersList      = "players";
 
   var supported = this.localStorageSupported();
   this.storage = supported ? window.localStorage : window.fakeStorage;
@@ -50,20 +50,48 @@ LocalStorageManager.prototype.setBestScore = function (score) {
 };
 
 // Game state getters/setters and clearing
-LocalStorageManager.prototype.getGameState = function () {
-  var stateJSON = this.storage.getItem(this.gameStateKey);
+LocalStorageManager.prototype.getGameState = function (player) {
+  var stateJSON = this.storage.getItem(player);
   return stateJSON ? JSON.parse(stateJSON) : null;
 };
 
-LocalStorageManager.prototype.setGameState = function (gameState) {
-  this.storage.setItem(this.gameStateKey, JSON.stringify(gameState));
+LocalStorageManager.prototype.setGameState = function (player, gameState) {
+  this.storage.setItem(player, JSON.stringify(gameState));
 };
 
-LocalStorageManager.prototype.clearGameState = function () {
-  this.storage.removeItem(this.gameStateKey);
+LocalStorageManager.prototype.clearGameState = function (player) {
+
+  var stateJSON = this.storage.getItem(player);
+  var state = JSON.parse(stateJSON);
+  state.grid        = null;
+  state.score       = 0;
+  state.over        = false;
+  state.won         = false;
+  state.keepPlaying = false;
+  state.gameUUID    = null;
+  state.moveDirection = null;
+  state.move        = 0;
+  stateJSON = JSON.stringify(state);
+  this.storage.setItem(player, stateJSON);
 };
 
 LocalStorageManager.prototype.getPlayers = function () {
-  var stateJSON = this.storage.getItem(this.playersList);
-  return stateJSON ? JSON.parse(stateJSON) : null;
+  var players = [];
+//this.storage.clear();
+  for(var key in this.storage) {
+    var value = this.storage[key];
+    var getType = {};
+    //zo zoznamu hracov vyhodime funkcie a length
+    if(getType.toString.call(value) != '[object Function]' && key != 'length') {
+      players.push(key);
+    }
+  }
+
+  return players;
+}
+
+
+LocalStorageManager.prototype.savePlayer = function(name, uuid) {
+  
+//  this.storage.setItem(name, uuid);
 }

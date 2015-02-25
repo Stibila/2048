@@ -15,8 +15,80 @@
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <script type="text/javascript">
+  <!--
+  function popup(content)
+  {
+    var divel = document.getElementById("popup");
+    divel.innerHTML = content;
+    divel.style.display="block";  
+  }
+  
+  function popdown()
+  {
+    var divel = document.getElementById("popup");
+    divel.innerHTML = '';
+    divel.style.display="none";
+  }
+
+  var tempX = 0;
+  var tempY = 0;
+  var IE = document.all ? true : false
+
+  function positiontip(e) 
+  {
+    if (IE) { // grab the x-y pos.s if browser is IE
+      tempX = event.clientX + document.body.scrollLeft;
+      tempY = event.clientY + document.body.scrollTop;
+    }
+    else {  // grab the x-y pos.s if browser is NS
+      tempX = e.pageX;
+      tempY = e.pageY;
+    }  
+    
+    if (tempX < 0){tempX = 0;}
+    if (tempY < 0){tempY = 0;}  
+
+    var divel = document.getElementById("popup");
+    divel.style.top = 5+tempY + "px";
+    divel.style.left = 5+tempX + "px";
+    
+    return true;
+  }
+  document.onmousemove=positiontip 
+
+  -->
+  </script>
+
+
+  <style type="text/css"> 
+
+  #popup
+  {
+    display: none;
+    position:absolute;
+    z-index:1000;
+    border:1px solid #15131A;
+    background-color: #2F2D2E;
+    color: #CAC8BF;
+    padding:10px;
+    width:300px;
+    border-radius: 7px ; 
+    font-size: 0.75em;
+  }
+
+  button, select, input[type="text"]
+  {
+    font-size: 20px;
+  }
+
+  </style>
+
 </head>
 <body>
+<div id="popup"></div>
+
   <div class="container">
     <div class="heading">
       <h1 class="title">2048</h1>
@@ -85,11 +157,11 @@
     </p>
   </div>
 
+  <script src="js/ajax_request_manager.js"></script>
   <script src="js/bind_polyfill.js"></script>
   <script src="js/classlist_polyfill.js"></script>
   <script src="js/animframe_polyfill.js"></script>
   <script src="js/keyboard_input_manager.js"></script>
-  <script src="js/game_recorder.js"></script>
   <script src="js/html_actuator.js"></script>
   <script src="js/grid.js"></script>
   <script src="js/tile.js"></script>

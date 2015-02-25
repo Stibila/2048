@@ -12,7 +12,6 @@ function KeyboardInputManager() {
     this.eventTouchend      = "touchend";
   }
 
-  this.listen();
 }
 
 KeyboardInputManager.prototype.on = function (event, callback) {

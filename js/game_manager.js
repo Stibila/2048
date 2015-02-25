@@ -1,8 +1,17 @@
 function GameManager(size, InputManager, Actuator, StorageManager) {
+alert('Funguje:\n' +
+      '	odosielanie noveho hraca na server\n' +
+      '	ziskanie uuid noveho hraca\n' +
+      '	ulozenie/nacitanie hraca, jeho hry, score a pod. lokalne\n' +
+      '	odosielanie hry a tahov na server\n' +
+      'Nefunguje:\n' +
+      '	stopovanie casu za ktory hrac vykonal tah\n' +
+      '	podpora viacerych hracov\n');
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
+//  this.ajaxManager    = new AjaxManager;
 
   this.startTiles     = 2;
 
@@ -14,7 +23,8 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
 }
 
 GameManager.prototype.hideEverything = function () {
-  elements = [this.divOverlay, this.divPlayerCreator, this.divPlayerList];
+  popdown();
+  elements = [this.divOverlay, this.divPlayerCreator, this.divPlayerList, this.divWait];
 
   elements.forEach(function(div)
   {
@@ -24,6 +34,11 @@ GameManager.prototype.hideEverything = function () {
       div = null;
     }
   })
+
+  this.divOverlay = null;
+  this.divPlayerCreator = null;
+  this.divPlayerList = null;
+  this.divWait = null;
 }
 
 //Zobrazi overlay (prekryje stranku sedou farbou)
@@ -39,7 +54,32 @@ GameManager.prototype.showOverlay = function () {
   this.divOverlay.style.right = '0';
   this.divOverlay.name = "overlay";
   this.divOverlay.id = 'overlay';
-  this.divOverlay.innerHTML = '';
+  while (this.divOverlay.firstChild) {
+    this.divOverlay.removeChild(this.divOverlay.firstChild);
+  }
+}
+
+GameManager.prototype.showWaiting = function (message) {
+  this.hideEverything();
+  this.showOverlay();
+  this.divWait = document.createElement('div');
+  document.body.insertBefore(this.divWait, document.body.firstChild);
+  this.divWait.style.background = 'rgba(0,0,0,0.8)';
+  this.divWait.style.borderRadius = '20px';
+  this.divWait.style.position = 'absolute';
+  this.divWait.style.marginLeft = 'auto';
+  this.divWait.style.marginRight = 'auto';
+  this.divWait.style.paddingTop = '10px';
+  this.divWait.style.paddingBottom = '10px';
+  this.divWait.style.zIndex = '101';
+  this.divWait.style.top = '250px';
+  this.divWait.style.left = '0';
+  this.divWait.style.right = '0';
+  this.divWait.style.width = '500px';
+  this.divWait.style.textAlign = 'center';
+  this.divWait.name = "Wait";
+  this.divWait.id = 'Wait';
+  this.divWait.innerHTML = message;
 }
 
 //Zobrazi menu vytvorenia noveho hraca!
@@ -58,31 +98,74 @@ GameManager.prototype.showPlayerCreator = function () {
   this.divPlayerCreator.style.top = '50px';
   this.divPlayerCreator.style.left = '0';
   this.divPlayerCreator.style.right = '0';
-  this.divPlayerCreator.style.width = '550px';
-  this.divPlayerCreator.style.textAlign = 'center';
 
+  this.divPlayerCreator.style.maxWidth = '500px';
+  this.divPlayerCreator.style.textAlign = 'center';
   this.divPlayerCreator.name = "CreatePlayer";
   this.divPlayerCreator.id = 'CreatePlayer';
 
   var ageOptions = '';
 //  var def = '';
-  for(i = 1; i < 100; i++)
+  var year = new Date().getFullYear();
+  for(i = year - 100; i < year; i++)
   {
-    if(i == 20) var sel = ' selected="selected"';
+    if(i == year - 15) var sel = ' selected="selected"';
     else var sel = '';
     ageOptions += '<option '+sel+' value="'+i+'">'+i+'</option>'
   }
-  this.divPlayerCreator.innerHTML = '<p><b title="Your name is sotred locally on your computer. It will not be send to our servers">Your name:</b><br /><input type="text" name="name" /></p>' +
-                                 '<p><b title="Your will be recorded for statistic purpose. Leave blank if you do not want us to know your age.">Your age:</b><br /><select name="age">'+ageOptions+'</select></p>' +
-                                 '<p><b title="How well you know 2048 game">Your experience with 2048:</b><br /><select name="experience"> <option value="0">What is 2048? Never hear of it before</option> <option value="1">I hear about it, but newer played it</option> <option value="2">I played it few times, but newer made it to 2048</option> <option value="3">I play it a lot, few times I successfully reached 2048</option> <option value="4">2048? It\'s 4096 or 8192 for me every time</option> </select></p>' +
-                                 '<button type="button" onSubmit="alert()">Crate new player</button>' +
-                                 '';
+
+  this.form = document.createElement("form");
+//  this.form.onSubmit = "alert('Teraz sa tento formular odosle asynchronne na server a spusti sa nova hra.'); this.hideEverything(); return false;"
+  this.form.addEventListener('submit', this.submitPlayer, false);
+  this.form.action = "/server/";
+  this.submit = document.createElement("button");
+  this.submit.type = "submit";
+  this.submit.innerHTML = "submit";
+
+  this.p1 = document.createElement("p");
+  this.p2 = document.createElement("p");
+  this.p3 = document.createElement("p");
+
+  this.p1.addEventListener('mouseover', function() {popup('Your name is stored locally on your computer. It will not be send to our servers');}, false);
+  this.p1.addEventListener('mouseout', function() {popdown();}, false);
+  this.p2.addEventListener('mouseover', function() {popup('Your age will be recorded for statistic purpose.');}, false);
+  this.p2.addEventListener('mouseout', function() {popdown();}, false);
+  this.p3.addEventListener('mouseover', function() {popup('How well you know 2048 game');}, false);
+  this.p3.addEventListener('mouseout', function() {popdown();}, false);
+
+  this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
+  this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
+//  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">What is 2048? Never hear of it before</option> <option value="1">I hear about it, but newer played it</option> <option value="2">I played it few times, but newer made it to 2048</option> <option value="3">I play it a lot, few times I successfully reached 2048</option> <option value="4">2048? It\'s 4096 or 8192 for me every time</option> </select>';
+  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">0</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> </select>';
+ 
+  this.divPlayerCreator.appendChild(this.form);
+  this.form.appendChild(this.p1);
+  this.form.appendChild(this.p2);
+  this.form.appendChild(this.p3);
+  this.form.appendChild(this.submit);
 } 
+
+GameManager.prototype.submitPlayer = function (e) {
+  e.preventDefault(); 
+  e.stopPropagation();
+
+  gm.showWaiting("Wait a second, creating  new player");
+  var ajaxManager = new AjaxManager;
+  ajaxManager.newPlayer(gm.form.elements['experience'].value, gm.form.elements['birth'].value);
+  gm.player = gm.form.elements['name'].value;
+}
+
+GameManager.prototype.getPlayerUUID = function (uuid) {
+  gm.playerUUID = uuid;
+  gm.hideEverything();
+  gm.storageManager.setGameState(gm.player, gm.serialize());
+  gm.setup();
+}
 
 GameManager.prototype.selectPlayer = function () {
   //tu sa zobrazi vyber hraca
   var players = this.storageManager.getPlayers();
-  if(players == null)
+  if(players == null || players.length < 1)
   {
     //show player creator page:
     this.showPlayerCreator();
@@ -90,17 +173,23 @@ GameManager.prototype.selectPlayer = function () {
   else if (players.length == 1)
   {
     //players obsahuje len jedneho hraca, okamzite ho pouzijeme
+alert('Defaultne pouzity hrac: ' + players[0] + '\nZatial chyba podpora viacerych hracov.');
+    this.player = players[0];
+    this.setup();
   }
   else
   {
     //players obsahuje viacero hracov, zobrazime moznost vyberu z nich
+alert('Defaultne pouzity hrac: ' + players[0] + '\nZatial chyba podpora viacerych hracov.');
+    this.player = players[0];
+    this.setup();
   }
 }
 
 
 // Restart the game
 GameManager.prototype.restart = function () {
-  this.storageManager.clearGameState();
+  this.storageManager.clearGameState(this.player);
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
 };
@@ -119,35 +208,63 @@ GameManager.prototype.isGameTerminated = function () {
 // Set up the game
 GameManager.prototype.setup = function () {
   this.hideEverything();
+
   if(this.player == null) {
     this.selectPlayer();
     return;
   }
 
-  var previousState = this.storageManager.getGameState();
+  //ak uz je listener zadefinovany, znovu ho nenastavujeme
+  if(!this.listenerIsSet) {
+    this.inputManager.listen();
+    this.listenerIsSet = true;
+  }
+
+  var previousState = this.storageManager.getGameState(this.player);
 
   // Reload the game from a previous game if present
-  if (previousState) {
-    this.grid        = new Grid(previousState.grid.size,
-                                previousState.grid.cells); // Reload grid
-    this.score       = previousState.score;
-    this.over        = previousState.over;
-    this.won         = previousState.won;
-    this.keepPlaying = previousState.keepPlaying;
-  } else {
-    this.grid        = new Grid(this.size);
+  if(previousState) {
+    this.score       = ((previousState.score) ? previousState.score : 0); 
+    this.bestScore   = ((previousState.bestScore) ? previousState.bestScore : 0); 
+    this.over        = ((previousState.over) ? previousState.over : false);
+    this.won         = ((previousState.won) ? previousState.won : false);
+    this.keepPlaying = ((previousState.keepPlaying) ? previousState.keepPlaying : false)
+    this.playerUUID  = ((previousState.playerUUID) ? previousState.playerUUID : null);
+    this.gameUUID    = ((previousState.gameUUID) ? previousState.gameUUID : null);
+    this.moveDirection = ((previousState.moveDirection) ? previousState.moveDirection : null);
+    this.move        = ((previousState.move) ? previousState.move : 0);
+  }
+  else {
     this.score       = 0;
+    this.bestScore   = 0;
     this.over        = false;
     this.won         = false;
     this.keepPlaying = false;
-
-    // Add the initial tiles
-    this.addStartTiles();
+    this.moveDirection = null;
+    this.move = 0;
   }
+  if(previousState && previousState.grid) {
+    this.grid        = new Grid(previousState.grid.size, previousState.grid.cells);
+    this.fromMove    = '';
+    // Update the actuator
+    this.actuate(); 
+  }
+  else {
+    gm.showWaiting("Wait a second, creating  new game");
+    ajaxManager = new AjaxManager();
+    ajaxManager.newGame(this.playerUUID);
+  }
+};
+
+GameManager.prototype.getGameUUID = function(uuid) {
+  this.gameUUID = uuid;
+  this.hideEverything();
+  this.grid        = new Grid(this.size);
+  this.addStartTiles();
 
   // Update the actuator
-  this.actuate();
-};
+  this.actuate(); 
+}
 
 // Set up the initial tiles to start the game with
 GameManager.prototype.addStartTiles = function () {
@@ -168,22 +285,26 @@ GameManager.prototype.addRandomTile = function () {
 
 // Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
-  if (this.storageManager.getBestScore() < this.score) {
-    this.storageManager.setBestScore(this.score);
+  ajaxManager = new AjaxManager();
+  ajaxManager.newMove(this.serialize());
+
+
+  if (!this.bestScore || this.bestScore < this.score) {
+    this.bestScore = this.score;
   }
 
   // Clear the state when the game is over (game over only, not win)
   if (this.over) {
-    this.storageManager.clearGameState();
+    this.storageManager.clearGameState(this.player);
   } else {
-    this.storageManager.setGameState(this.serialize());
+    this.storageManager.setGameState(this.player, this.serialize());
   }
 
   this.actuator.actuate(this.grid, {
     score:      this.score,
     over:       this.over,
     won:        this.won,
-    bestScore:  this.storageManager.getBestScore(),
+    bestScore:  this.bestScore,
     terminated: this.isGameTerminated()
   });
 
@@ -192,11 +313,16 @@ GameManager.prototype.actuate = function () {
 // Represent the current game as an object
 GameManager.prototype.serialize = function () {
   return {
-    grid:        this.grid.serialize(),
+    grid:        ((this.grid) ? this.grid.serialize() : null),
     score:       this.score,
+    bestScore:   this.bestScore,
     over:        this.over,
     won:         this.won,
-    keepPlaying: this.keepPlaying
+    keepPlaying: this.keepPlaying,
+    playerUUID:  this.playerUUID,
+    gameUUID:    this.gameUUID,
+    moveDirection: this.moveDirection,
+    move:        this.move
   };
 };
 
@@ -222,10 +348,14 @@ GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
 
+  //pri kazdom pohybe si zapiseme smer ktorym sa hybeme.
+  var moves = ['U','R','D','L'];
+  this.moveDirection = moves[direction];
+  this.move++;
+
   if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
   var cell, tile;
-
   var vector     = this.getVector(direction);
   var traversals = this.buildTraversals(vector);
   var moved      = false;
