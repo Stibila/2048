@@ -4,8 +4,8 @@ alert('Funguje:\n' +
       '	ziskanie uuid noveho hraca\n' +
       '	ulozenie/nacitanie hraca, jeho hry, score a pod. lokalne\n' +
       '	odosielanie hry a tahov na server\n' +
-      'Nefunguje:\n' +
       '	stopovanie casu za ktory hrac vykonal tah\n' +
+      'Nefunguje:\n' +
       '	podpora viacerych hracov\n');
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
@@ -233,6 +233,7 @@ GameManager.prototype.setup = function () {
     this.gameUUID    = ((previousState.gameUUID) ? previousState.gameUUID : null);
     this.moveDirection = ((previousState.moveDirection) ? previousState.moveDirection : null);
     this.move        = ((previousState.move) ? previousState.move : 0);
+    this.timestamp   = ((previousState.timestamp) ? previousState.timestamp : Date.now());
   }
   else {
     this.score       = 0;
@@ -242,6 +243,7 @@ GameManager.prototype.setup = function () {
     this.keepPlaying = false;
     this.moveDirection = null;
     this.move = 0;
+    this.timestamp   = Date.now();
   }
   if(previousState && previousState.grid) {
     this.grid        = new Grid(previousState.grid.size, previousState.grid.cells);
@@ -322,7 +324,8 @@ GameManager.prototype.serialize = function () {
     playerUUID:  this.playerUUID,
     gameUUID:    this.gameUUID,
     moveDirection: this.moveDirection,
-    move:        this.move
+    move:        this.move,
+    timestamp:   this.timestamp
   };
 };
 
@@ -352,6 +355,7 @@ GameManager.prototype.move = function (direction) {
   var moves = ['U','R','D','L'];
   this.moveDirection = moves[direction];
   this.move++;
+  this.timestamp = Date.now();
 
   if (this.isGameTerminated()) return; // Don't do anything if the game's over
 

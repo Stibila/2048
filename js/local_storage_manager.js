@@ -71,6 +71,7 @@ LocalStorageManager.prototype.clearGameState = function (player) {
   state.gameUUID    = null;
   state.moveDirection = null;
   state.move        = 0;
+  state.timestamp   = Date.now();
   stateJSON = JSON.stringify(state);
   this.storage.setItem(player, stateJSON);
 };

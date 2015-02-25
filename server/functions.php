@@ -99,6 +99,7 @@ function new_move($game) {
 	$move = $game['move'];
 	$score = $game['score'];
 	$direction = $game['moveDirection'];
+	$timestamp = $game['timestamp'];
 	$grid = transform_grid($game['grid']);
 
 	$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -126,13 +127,14 @@ function new_move($game) {
 	}
 	$stmt->close();
 
-	$stmt = $conn->prepare("INSERT INTO move (game_id, move, direction, score, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+	$stmt = $conn->prepare("INSERT INTO move (game_id, move, direction, score, timestamp, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-	$stmt->bind_param("iisiiiiiiiiiiiiiiiii",
+	$stmt->bind_param("iisiiiiiiiiiiiiiiiiii",
 			$game_id,
 			$move,
 			$direction,
 			$score,
+			$timestamp,
 			$grid["0"],
 			$grid["1"],
 			$grid["2"],
