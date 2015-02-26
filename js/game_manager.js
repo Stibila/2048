@@ -5,7 +5,7 @@ alert('Funguje:\n' +
       '	ulozenie/nacitanie hraca, jeho hry, score a pod. lokalne\n' +
       '	odosielanie hry a tahov na server\n' +
       '	stopovanie casu za ktory hrac vykonal tah\n' +
-      'Nefunguje:\n' +
+//      'Nefunguje:\n' +
       '	podpora viacerych hracov\n');
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
@@ -24,7 +24,7 @@ alert('Funguje:\n' +
 
 GameManager.prototype.hideEverything = function () {
   popdown();
-  elements = [this.divOverlay, this.divPlayerCreator, this.divPlayerList, this.divWait];
+  elements = [this.divOverlay, this.divPlayerSelector, this.divPlayerCreator, this.divPlayerList, this.divWait];
 
   elements.forEach(function(div)
   {
@@ -37,6 +37,7 @@ GameManager.prototype.hideEverything = function () {
 
   this.divOverlay = null;
   this.divPlayerCreator = null;
+  this.divPlayerSelector = null;
   this.divPlayerList = null;
   this.divWait = null;
 }
@@ -82,8 +83,75 @@ GameManager.prototype.showWaiting = function (message) {
   this.divWait.innerHTML = message;
 }
 
+//Zobrazi menu vyberania hraca
+GameManager.prototype.showPlayerSelector = function (playerList) {
+  this.hideEverything();
+  this.showOverlay();
+
+  this.divPlayerSelector = document.createElement('div');
+  document.body.insertBefore(this.divPlayerSelector, document.body.firstChild);
+  this.divPlayerSelector.style.background = 'rgba(0,0,0,0.8)';
+  this.divPlayerSelector.style.borderRadius = '50px';
+  this.divPlayerSelector.style.position = 'absolute';
+  this.divPlayerSelector.style.marginLeft = 'auto';
+  this.divPlayerSelector.style.marginRight = 'auto';
+  this.divPlayerSelector.style.paddingTop = '50px';
+  this.divPlayerSelector.style.paddingBottom = '100px';
+  this.divPlayerSelector.style.zIndex = '101';
+  this.divPlayerSelector.style.top = '50px';
+  this.divPlayerSelector.style.left = '0';
+  this.divPlayerSelector.style.right = '0';
+
+  this.divPlayerSelector.style.maxWidth = '500px';
+  this.divPlayerSelector.style.textAlign = 'center';
+  this.divPlayerSelector.name = "SelectPlayer";
+  this.divPlayerSelector.id = 'SelectPlayer';
+
+  this.p0 = document.createElement('p');
+  this.p0.innerHTML = 'This allow multiple players from same computer.';
+  this.divPlayerSelector.appendChild(this.p0);
+
+  var that = this;
+  playerList.forEach(function (player) {
+    var divPlayer = document.createElement('div');
+    divPlayer.style.borderStyle = 'solid';
+    divPlayer.style.borderRadius = '10px';
+    divPlayer.style.borderColor = 'rgb(48,48,48)';
+    divPlayer.style.marginBottom = '5px';
+    divPlayer.style.width = '60%';
+    divPlayer.style.display = 'inline-block';
+    divPlayer.style.fontSize = '200%';
+    divPlayer.style.background = 'rgba(0,0,0,0.8)';
+    divPlayer.style.color = 'white';
+    divPlayer.addEventListener('mouseover', function() {divPlayer.style.background = 'silver'; divPlayer.style.color = 'black'}, false);
+    divPlayer.addEventListener('mouseout', function() {divPlayer.style.background = 'black'; divPlayer.style.color = 'white'}, false);
+    divPlayer.addEventListener('click', function() {that.player = player; that.setup()} ,false);
+    divPlayer.innerHTML = player;
+    that.divPlayerSelector.appendChild(divPlayer);
+  });
+
+  var divAddPlayer = document.createElement('div');
+  divAddPlayer.style.borderStyle = 'solid';
+  divAddPlayer.style.borderRadius = '10px';
+  divAddPlayer.style.borderColor = 'rgb(48,128,48)';
+  divAddPlayer.style.marginBottom = '5px';
+  divAddPlayer.style.width = '60%';
+  divAddPlayer.style.display = 'inline-block';
+  divAddPlayer.style.fontSize = '200%';
+  divAddPlayer.style.background = 'rgb(32,128,32)';
+  divAddPlayer.style.color = 'black';
+  divAddPlayer.addEventListener('mouseover', function() {divAddPlayer.style.background = 'rgb(32,192,32)'; divAddPlayer.style.color = 'white'}, false);
+  divAddPlayer.addEventListener('mouseout', function() {divAddPlayer.style.background = 'rgb(32,128,32)'; divAddPlayer.style.color = 'black'}, false);
+  divAddPlayer.addEventListener('click', function() {that.showPlayerCreator()} ,false);
+  divAddPlayer.innerHTML = 'New Player';
+  that.divPlayerSelector.appendChild(divAddPlayer);
+
+
+}
+
 //Zobrazi menu vytvorenia noveho hraca!
 GameManager.prototype.showPlayerCreator = function () {
+  this.hideEverything();
   this.showOverlay();
   this.divPlayerCreator = document.createElement('div');
   document.body.insertBefore(this.divPlayerCreator, document.body.firstChild);
@@ -135,8 +203,13 @@ GameManager.prototype.showPlayerCreator = function () {
 
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
-//  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">What is 2048? Never hear of it before</option> <option value="1">I hear about it, but newer played it</option> <option value="2">I played it few times, but newer made it to 2048</option> <option value="3">I play it a lot, few times I successfully reached 2048</option> <option value="4">2048? It\'s 4096 or 8192 for me every time</option> </select>';
-  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">0</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> </select>';
+  this.p3.innerHTML = '<b>Your experience with 2048 game:</b><br /><select name="experience">' +
+                          '<option value="0">[0] I Never hear of it before.</option>' +
+                          '<option value="1">[1] I know it, but newer played it.</option>' +
+                          '<option value="2">[2] I newer made it to 2048.</option>' +
+                          '<option value="3">[3] I reached 2048 few times.</option>' +
+                          '<option value="4">[4] I made it up to 4096 or 8192.</option> </select>';
+//  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">0</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> </select>';
  
   this.divPlayerCreator.appendChild(this.form);
   this.form.appendChild(this.p1);
@@ -170,6 +243,11 @@ GameManager.prototype.selectPlayer = function () {
     //show player creator page:
     this.showPlayerCreator();
   }
+  else
+  {
+    this.showPlayerSelector(players);
+  }
+/*
   else if (players.length == 1)
   {
     //players obsahuje len jedneho hraca, okamzite ho pouzijeme
@@ -184,6 +262,7 @@ alert('Defaultne pouzity hrac: ' + players[0] + '\nZatial chyba podpora viaceryc
     this.player = players[0];
     this.setup();
   }
+/**/
 }
 
 
