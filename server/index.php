@@ -45,8 +45,8 @@ if(isset($_GET['new']))
 				}
 				die($message);
 		case 'player':
-				if(isset($_GET['birth_year']) && isset($_GET['experience'])) {
-					$uuid = new_player($_GET['birth_year'], $_GET['experience']);
+				if(isset($_GET['birth_year']) && isset($_GET['experience']) && isset($_GET['gender'])) {
+					$uuid = new_player($_GET['birth_year'], $_GET['experience'], $_GET['gender']);
 					if($uuid != null && $uuid != false) {
 						header("HTTP/1.1 200 OK");
 						$message = $uuid;

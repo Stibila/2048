@@ -10,9 +10,11 @@ USE `2048` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `2048`.`player` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `ip` INT NOT NULL,
   `uuid` VARCHAR(45) NOT NULL,
   `birth_year` INT NULL,
   `experiences` INT NULL,
+  `gender` CHAR NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC))
 ENGINE = InnoDB;
@@ -25,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `2048`.`game` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `player_id` BIGINT NOT NULL,
   `uuid` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id`, `player_id`),
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC),
   INDEX `fk_game_player1_idx` (`player_id` ASC),
   CONSTRAINT `fk_game_player1`
@@ -74,4 +76,3 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-

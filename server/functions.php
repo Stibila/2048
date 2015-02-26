@@ -160,7 +160,7 @@ function new_move($game) {
 	return ($affected_rows > 0);
 }
 
-function new_player($birth, $exp) {
+function new_player($birth, $exp, $gender) {
 	// Create connection
 	$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
@@ -185,10 +185,12 @@ function new_player($birth, $exp) {
 	$stmt->close();
 
 	// prepare and bind
-	$stmt = $conn->prepare("INSERT INTO player (uuid, birth_year, experiences) VALUES (?, ?, ?);
+	$stmt = $conn->prepare("INSERT INTO player (ip, uuid, birth_year, experiences, gender) VALUES (?, ?, ?, ?, ?);
 ");
+        $ip = ip2long(get_client_ip());
+	$gender = $gender[0];
 
-	$stmt->bind_param("sii", $uuid, $birth, $exp);
+	$stmt->bind_param("isiis", $ip, $uuid, $birth, $exp, $gender);
 	$stmt->execute();
 
 	if($stmt->affected_rows > 0) {
@@ -202,5 +204,24 @@ function new_player($birth, $exp) {
 	$conn->close();
 	
 	return $ret;
+}
+
+function get_client_ip() {
+    $ipaddress = '';
+    if (getenv('HTTP_CLIENT_IP'))
+        $ipaddress = getenv('HTTP_CLIENT_IP');
+    else if(getenv('HTTP_X_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+    else if(getenv('HTTP_X_FORWARDED'))
+        $ipaddress = getenv('HTTP_X_FORWARDED');
+    else if(getenv('HTTP_FORWARDED_FOR'))
+        $ipaddress = getenv('HTTP_FORWARDED_FOR');
+    else if(getenv('HTTP_FORWARDED'))
+       $ipaddress = getenv('HTTP_FORWARDED');
+    else if(getenv('REMOTE_ADDR'))
+        $ipaddress = getenv('REMOTE_ADDR');
+    else
+        $ipaddress = "0.0.0.0";
+    return $ipaddress;
 }
 ?>

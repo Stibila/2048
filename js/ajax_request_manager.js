@@ -25,7 +25,7 @@ function AjaxManager() {
   }
 }
 
-AjaxManager.prototype.newPlayer = function (exp, birth) {
+AjaxManager.prototype.newPlayer = function (exp, birth, gender) {
   this.playerCreated = false;
   var that = this;
   this.request.onreadystatechange = function(){
@@ -42,9 +42,10 @@ AjaxManager.prototype.newPlayer = function (exp, birth) {
       }
     }
   }
-  this.request.open("GET", "/server/?new=player&experience="+exp+"&birth_year="+birth, true);
+
+  this.request.open("GET", "/server/?new=player&experience="+exp+"&birth_year="+birth+"&gender="+gender, true);
   this.request.send();
-//i  setTimeout(function() { that.request.abort(); gm.getPlayerUUID(null);   } , this.timeout);
+
   setTimeout(function() {
                 that.request.abort();
                 if(!that.playerCreated) {

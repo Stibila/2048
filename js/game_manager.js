@@ -126,7 +126,7 @@ GameManager.prototype.showPlayerSelector = function (playerList) {
     divPlayer.addEventListener('mouseover', function() {divPlayer.style.background = 'silver'; divPlayer.style.color = 'black'}, false);
     divPlayer.addEventListener('mouseout', function() {divPlayer.style.background = 'black'; divPlayer.style.color = 'white'}, false);
     divPlayer.addEventListener('click', function() {that.player = player; that.setup()} ,false);
-    divPlayer.innerHTML = player;
+    divPlayer.innerHTML = (player == "") ? "Unnamed Player" : player;
     that.divPlayerSelector.appendChild(divPlayer);
   });
 
@@ -193,17 +193,21 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p1 = document.createElement("p");
   this.p2 = document.createElement("p");
   this.p3 = document.createElement("p");
+  this.p4 = document.createElement("p");
 
   this.p1.addEventListener('mouseover', function() {popup('Your name is stored locally on your computer. It will not be send to our servers');}, false);
   this.p1.addEventListener('mouseout', function() {popdown();}, false);
   this.p2.addEventListener('mouseover', function() {popup('Your age will be recorded for statistic purpose.');}, false);
   this.p2.addEventListener('mouseout', function() {popdown();}, false);
-  this.p3.addEventListener('mouseover', function() {popup('How well you know 2048 game');}, false);
+  this.p3.addEventListener('mouseover', function() {popup('Select your gender');}, false);
   this.p3.addEventListener('mouseout', function() {popdown();}, false);
+  this.p4.addEventListener('mouseover', function() {popup('How well you know 2048 game');}, false);
+  this.p4.addEventListener('mouseout', function() {popdown();}, false);
 
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
-  this.p3.innerHTML = '<b>Your experience with 2048 game:</b><br /><select name="experience">' +
+  this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';
+  this.p4.innerHTML = '<b>Your experience with 2048 game:</b><br /><select name="experience">' +
                           '<option value="0">[0] I Never hear of it before.</option>' +
                           '<option value="1">[1] I know it, but newer played it.</option>' +
                           '<option value="2">[2] I newer made it to 2048.</option>' +
@@ -215,6 +219,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.form.appendChild(this.p1);
   this.form.appendChild(this.p2);
   this.form.appendChild(this.p3);
+  this.form.appendChild(this.p4);
   this.form.appendChild(this.submit);
 } 
 
@@ -224,7 +229,7 @@ GameManager.prototype.submitPlayer = function (e) {
 
   gm.showWaiting("Wait a second, creating  new player");
   var ajaxManager = new AjaxManager;
-  ajaxManager.newPlayer(gm.form.elements['experience'].value, gm.form.elements['birth'].value);
+  ajaxManager.newPlayer(gm.form.elements['experience'].value, gm.form.elements['birth'].value, gm.form.elements['gender'].value);
   gm.player = gm.form.elements['name'].value;
 }
 
