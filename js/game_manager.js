@@ -160,12 +160,13 @@ GameManager.prototype.showPlayerCreator = function () {
   this.divPlayerCreator.style.position = 'absolute';
   this.divPlayerCreator.style.marginLeft = 'auto';
   this.divPlayerCreator.style.marginRight = 'auto';
-  this.divPlayerCreator.style.paddingTop = '50px';
-  this.divPlayerCreator.style.paddingBottom = '100px';
+  this.divPlayerCreator.style.paddingTop = '20px';
+  this.divPlayerCreator.style.paddingBottom = '50px';
   this.divPlayerCreator.style.zIndex = '101';
   this.divPlayerCreator.style.top = '50px';
   this.divPlayerCreator.style.left = '0';
   this.divPlayerCreator.style.right = '0';
+  this.divPlayerCreator.style.color = 'rgb(224,224,224)';
 
   this.divPlayerCreator.style.maxWidth = '500px';
   this.divPlayerCreator.style.textAlign = 'center';
@@ -177,7 +178,7 @@ GameManager.prototype.showPlayerCreator = function () {
   var year = new Date().getFullYear();
   for(i = year - 100; i < year; i++)
   {
-    if(i == year - 15) var sel = ' selected="selected"';
+    if(i == year - 20) var sel = ' selected="selected"';
     else var sel = '';
     ageOptions += '<option '+sel+' value="'+i+'">'+i+'</option>'
   }
@@ -186,14 +187,30 @@ GameManager.prototype.showPlayerCreator = function () {
 //  this.form.onSubmit = "alert('Teraz sa tento formular odosle asynchronne na server a spusti sa nova hra.'); this.hideEverything(); return false;"
   this.form.addEventListener('submit', this.submitPlayer, false);
   this.form.action = "/server/";
-  this.submit = document.createElement("button");
-  this.submit.type = "submit";
-  this.submit.innerHTML = "submit";
 
+  this.submit = document.createElement("button");
+
+  this.submit.style.borderStyle = 'solid';
+  this.submit.style.borderRadius = '10px';
+  this.submit.style.borderColor = 'rgb(48,128,48)';
+  this.submit.style.marginBottom = '5px';
+  this.submit.style.width = '60%';
+  this.submit.style.display = 'inline-block';
+  this.submit.style.fontSize = '200%';
+  this.submit.style.background = 'rgb(32,128,32)';
+  this.submit.style.color = 'black';
+  this.submit.addEventListener('mouseover', function() {gm.submit.style.background = 'rgb(32,192,32)'; gm.submit.style.color = 'white'}, false);
+  this.submit.addEventListener('mouseout', function() {gm.submit.style.background = 'rgb(32,128,32)'; gm.submit.style.color = 'black'}, false);
+  this.submit.innerHTML = 'Start Game';
+
+  this.p0 = document.createElement("p");
   this.p1 = document.createElement("p");
   this.p2 = document.createElement("p");
   this.p3 = document.createElement("p");
   this.p4 = document.createElement("p");
+
+  this.p0.style.margin = '20px';
+  this.p0.style.color = 'rgb(192,192,192)';
 
   this.p1.addEventListener('mouseover', function() {popup('Your name is stored locally on your computer. It will not be sent to our servers');}, false);
   this.p1.addEventListener('mouseout', function() {popdown();}, false);
@@ -204,6 +221,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p4.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
   this.p4.addEventListener('mouseout', function() {popdown();}, false);
 
+  this.p0.innerHTML = 'This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, befor you start, tell us something about You:';
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
   this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';
@@ -216,6 +234,7 @@ GameManager.prototype.showPlayerCreator = function () {
 //  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">0</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> </select>';
  
   this.divPlayerCreator.appendChild(this.form);
+  this.form.appendChild(this.p0);
   this.form.appendChild(this.p1);
   this.form.appendChild(this.p2);
   this.form.appendChild(this.p3);
