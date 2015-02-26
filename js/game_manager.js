@@ -108,7 +108,7 @@ GameManager.prototype.showPlayerSelector = function (playerList) {
   this.divPlayerSelector.id = 'SelectPlayer';
 
   this.p0 = document.createElement('p');
-  this.p0.innerHTML = 'This allow multiple players from same computer.';
+  this.p0.innerHTML = 'This allow multiple players from same computer. Please, create only one player for a person.';
   this.divPlayerSelector.appendChild(this.p0);
 
   var that = this;
@@ -195,13 +195,13 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p3 = document.createElement("p");
   this.p4 = document.createElement("p");
 
-  this.p1.addEventListener('mouseover', function() {popup('Your name is stored locally on your computer. It will not be send to our servers');}, false);
+  this.p1.addEventListener('mouseover', function() {popup('Your name is stored locally on your computer. It will not be sent to our servers');}, false);
   this.p1.addEventListener('mouseout', function() {popdown();}, false);
   this.p2.addEventListener('mouseover', function() {popup('Your age will be recorded for statistic purpose.');}, false);
   this.p2.addEventListener('mouseout', function() {popdown();}, false);
-  this.p3.addEventListener('mouseover', function() {popup('Select your gender');}, false);
+  this.p3.addEventListener('mouseover', function() {popup('Your gender will be recorded for statistic purpose.');}, false);
   this.p3.addEventListener('mouseout', function() {popdown();}, false);
-  this.p4.addEventListener('mouseover', function() {popup('How well you know 2048 game');}, false);
+  this.p4.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
   this.p4.addEventListener('mouseout', function() {popdown();}, false);
 
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
