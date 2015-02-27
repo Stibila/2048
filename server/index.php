@@ -64,6 +64,6 @@ if(isset($_GET['new']))
 	}
 }
 
-echo "tralala";
-
+header("HTTP/1.1 400 Bad Request");
+echo "Wrong params";
 ?>

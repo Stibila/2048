@@ -185,12 +185,13 @@ function new_player($birth, $exp, $gender) {
 	$stmt->close();
 
 	// prepare and bind
-	$stmt = $conn->prepare("INSERT INTO player (ip, uuid, birth_year, experiences, gender) VALUES (?, ?, ?, ?, ?);
+	$stmt = $conn->prepare("INSERT INTO player (ip, user_agent, uuid, birth_year, experiences, gender) VALUES (?, ?, ?, ?, ?, ?);
 ");
         $ip = ip2long(get_client_ip());
 	$gender = $gender[0];
+	$userAgent = $_SERVER['HTTP_USER_AGENT'];
 
-	$stmt->bind_param("isiis", $ip, $uuid, $birth, $exp, $gender);
+	$stmt->bind_param("issiis", $ip, $userAgent, $uuid, $birth, $exp, $gender);
 	$stmt->execute();
 
 	if($stmt->affected_rows > 0) {

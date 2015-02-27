@@ -11,6 +11,7 @@ USE `2048` ;
 CREATE TABLE IF NOT EXISTS `2048`.`player` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `ip` INT NOT NULL,
+  `user_agent` TEXT NULL,
   `uuid` VARCHAR(45) NOT NULL,
   `birth_year` INT NULL,
   `experiences` INT NULL,
