@@ -160,7 +160,7 @@ function new_move($game) {
 	return ($affected_rows > 0);
 }
 
-function new_player($birth, $exp, $gender) {
+function new_player($birth, $exp, $gender, $weekly, $genres) {
 	// Create connection
 	$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
@@ -185,13 +185,24 @@ function new_player($birth, $exp, $gender) {
 	$stmt->close();
 
 	// prepare and bind
-	$stmt = $conn->prepare("INSERT INTO player (ip, user_agent, uuid, birth_year, experiences, gender) VALUES (?, ?, ?, ?, ?, ?);
+	$stmt = $conn->prepare("INSERT INTO player (ip, user_agent, uuid, birth_year, experiences, gender, weekly, action, shooter, adventure, rpg, simulation, strategy, sport, logical) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 ");
+
         $ip = ip2long(get_client_ip());
 	$gender = $gender[0];
+
+        $g0 = ($genres['action'] ? 1 : 0);
+        $g1 = ($genres['shooter'] ? 1 : 0);
+        $g2 = ($genres['adventure'] ? 1 : 0);
+        $g3 = ($genres['rpg'] ? 1 : 0);
+        $g4 = ($genres['simulation'] ? 1 : 0);
+        $g5 = ($genres['strategy'] ? 1 : 0);
+        $g6 = ($genres['sport'] ? 1 : 0);
+        $g7 = ($genres['logical'] ? 1 : 0);
+
 	$userAgent = $_SERVER['HTTP_USER_AGENT'];
 
-	$stmt->bind_param("issiis", $ip, $userAgent, $uuid, $birth, $exp, $gender);
+	$stmt->bind_param("issiisiiiiiiiii", $ip, $userAgent, $uuid, $birth, $exp, $gender, $weekly, $g0, $g1, $g2, $g3, $g4, $g5, $g6, $g7);
 	$stmt->execute();
 
 	if($stmt->affected_rows > 0) {

@@ -25,7 +25,8 @@ function AjaxManager() {
   }
 }
 
-AjaxManager.prototype.newPlayer = function (exp, birth, gender) {
+AjaxManager.prototype.newPlayer = function (exp, birth, gender, weekly, genres) {
+  var genresJSON = JSON.stringify(genres);
   this.playerCreated = false;
   var that = this;
   this.request.onreadystatechange = function(){
@@ -43,7 +44,7 @@ AjaxManager.prototype.newPlayer = function (exp, birth, gender) {
     }
   }
 
-  this.request.open("GET", "/server/?new=player&experience="+exp+"&birth_year="+birth+"&gender="+gender, true);
+  this.request.open("GET", "/server/?new=player&experience="+exp+"&birth_year="+birth+"&gender="+gender+"&weekly="+weekly+"&genres="+encodeURIComponent(genresJSON), true);
   this.request.send();
 
   setTimeout(function() {

@@ -1,12 +1,4 @@
 function GameManager(size, InputManager, Actuator, StorageManager) {
-alert('Funguje:\n' +
-      '	odosielanie noveho hraca na server\n' +
-      '	ziskanie uuid noveho hraca\n' +
-      '	ulozenie/nacitanie hraca, jeho hry, score a pod. lokalne\n' +
-      '	odosielanie hry a tahov na server\n' +
-      '	stopovanie casu za ktory hrac vykonal tah\n' +
-//      'Nefunguje:\n' +
-      '	podpora viacerych hracov\n');
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
@@ -208,6 +200,8 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p2 = document.createElement("p");
   this.p3 = document.createElement("p");
   this.p4 = document.createElement("p");
+  this.p5 = document.createElement("p");
+  this.p6 = document.createElement("p");
 
   this.p0.style.margin = '20px';
   this.p0.style.color = 'rgb(192,192,192)';
@@ -218,17 +212,42 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p2.addEventListener('mouseout', function() {popdown();}, false);
   this.p3.addEventListener('mouseover', function() {popup('Your gender will be recorded for statistic purpose.');}, false);
   this.p3.addEventListener('mouseout', function() {popdown();}, false);
-  this.p4.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
+  this.p4.addEventListener('mouseover', function() {popup('How much time you spend playing video games weekly?');}, false);
   this.p4.addEventListener('mouseout', function() {popdown();}, false);
+  this.p5.addEventListener('mouseover', function() {popup('Please, select game genres, that you play the most.');}, false);
+  this.p5.addEventListener('mouseout', function() {popdown();}, false);
+  this.p6.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
+  this.p6.addEventListener('mouseout', function() {popdown();}, false);
 
-  this.p0.innerHTML = 'This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, befor you start, tell us something about You:';
+  this.p0.innerHTML = 'This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
   this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';
-  this.p4.innerHTML = '<b>Your experience with 2048 game:</b><br /><select name="experience">' +
+  this.p4.innerHTML = '<b>How much time you spend playing videogames weekly:</b><br /><select name="weekly">' + 
+                          '<option value="0">I don\'t play games</option>' +
+                          '<option value="1">Less than 2 hours</option>' +
+                          '<option value="2">Between 2-10 hours</option>' +
+                          '<option value="3">Between 10-20 hours</option>' +
+                          '<option value="4">Between 20-40 hours</option>' +
+                          '<option value="5">More than 40 hours</option> </select>';
+  //4 kolko casu travia hranim
+  //5ake hry hraju
+	  this.p5.innerHTML = '<b>Select your favorite genres:</b><br />' +
+                          '<table style="margin-left:auto; margin-right:auto; text-align:left;">' +
+                          '<tr><td><label><input type="checkbox" name="g0" value="1">Action</label></td>' +
+                          '<td>    <label><input type="checkbox" name="g1" value="1">Shooters</label></td></tr>' +
+                          '<tr><td><label><input type="checkbox" name="g2" value="1">Adventure</label></td>' +
+                          '<td>    <label><input type="checkbox" name="g3" value="1">Role-playing (RPG)</label></td></tr>' +
+                          '<tr><td><label><input type="checkbox" name="g4" value="1">Simulations</label></td>' +
+                          '<td>    <label><input type="checkbox" name="g5" value="1">Strategy</label></td></tr>' +
+                          '<tr><td><label><input type="checkbox" name="g6" value="1">Sports</label></td>' +
+                          '<td>    <label><input type="checkbox" name="g7" value="1">Logical</label></td></tr>' +
+                          '</table>';
+
+  this.p6.innerHTML = '<b>Your experience with 2048 game:</b><br /><select name="experience">' +
                           '<option value="0">[0] I Never hear of it before.</option>' +
-                          '<option value="1">[1] I know it, but newer played it.</option>' +
-                          '<option value="2">[2] I newer made it to 2048.</option>' +
+                          '<option value="1">[1] I know it, but never played it.</option>' +
+                          '<option value="2">[2] I never made it to 2048.</option>' +
                           '<option value="3">[3] I reached 2048 few times.</option>' +
                           '<option value="4">[4] I made it up to 4096 or 8192.</option> </select>';
 //  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">0</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> </select>';
@@ -239,6 +258,8 @@ GameManager.prototype.showPlayerCreator = function () {
   this.form.appendChild(this.p2);
   this.form.appendChild(this.p3);
   this.form.appendChild(this.p4);
+  this.form.appendChild(this.p5);
+  this.form.appendChild(this.p6);
   this.form.appendChild(this.submit);
 } 
 
@@ -247,8 +268,25 @@ GameManager.prototype.submitPlayer = function (e) {
   e.stopPropagation();
 
   gm.showWaiting("Wait a second, creating  new player");
+  
+  var exp = gm.form.elements['experience'].value;
+  var birth = gm.form.elements['birth'].value;
+  var gender = gm.form.elements['gender'].value;
+  var weekly = gm.form.elements['weekly'].value;
+
+  var genres = {
+    'action':          gm.form.elements['g0'].checked,
+    'shooter':         gm.form.elements['g1'].checked,
+    'adventure':       gm.form.elements['g2'].checked,
+    'rpg':             gm.form.elements['g3'].checked,
+    'simulation':      gm.form.elements['g4'].checked,
+    'strategy':        gm.form.elements['g5'].checked,
+    'sport':           gm.form.elements['g6'].checked,
+    'logical':         gm.form.elements['g7'].checked
+  };
+ 
   var ajaxManager = new AjaxManager;
-  ajaxManager.newPlayer(gm.form.elements['experience'].value, gm.form.elements['birth'].value, gm.form.elements['gender'].value);
+  ajaxManager.newPlayer(exp, birth, gender, weekly, genres);
   gm.player = gm.form.elements['name'].value;
 }
 

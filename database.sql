@@ -16,6 +16,15 @@ CREATE TABLE IF NOT EXISTS `2048`.`player` (
   `birth_year` INT NULL,
   `experiences` INT NULL,
   `gender` CHAR NOT NULL,
+  `weekly` INT NOT NULL,
+  `action` TINYINT(4) NOT NULL,
+  `shooter` TINYINT(4) NOT NULL,
+  `adventure` TINYINT(4) NOT NULL,
+  `rpg` TINYINT(4) NOT NULL,
+  `simulation` TINYINT(4) NOT NULL,
+  `strategy` TINYINT(4) NOT NULL,
+  `sport` TINYINT(4) NOT NULL,
+  `logical` TINYINT(4) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC))
 ENGINE = InnoDB;
