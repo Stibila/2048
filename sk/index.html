@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>2048</title>
+
+  <link href="style/main.css" rel="stylesheet" type="text/css">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="meta/apple-touch-icon.png">
+  <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x1096.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"> <!-- iPhone 5+ -->
+  <link rel="apple-touch-startup-image" href="meta/apple-touch-startup-image-640x920.png"  media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)"> <!-- iPhone, retina -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <script type="text/javascript">
+  <!--
+  function popup(content)
+  {
+    var divel = document.getElementById("popup");
+    divel.innerHTML = content;
+    divel.style.display="block";  
+  }
+  
+  function popdown()
+  {
+    var divel = document.getElementById("popup");
+    divel.innerHTML = '';
+    divel.style.display="none";
+  }
+
+  var tempX = 0;
+  var tempY = 0;
+  var IE = document.all ? true : false
+
+  function positiontip(e) 
+  {
+    if (IE) { // grab the x-y pos.s if browser is IE
+      tempX = event.clientX + document.body.scrollLeft;
+      tempY = event.clientY + document.body.scrollTop;
+    }
+    else {  // grab the x-y pos.s if browser is NS
+      tempX = e.pageX;
+      tempY = e.pageY;
+    }  
+    
+    if (tempX < 0){tempX = 0;}
+    if (tempY < 0){tempY = 0;}  
+
+    var divel = document.getElementById("popup");
+    divel.style.top = 5+tempY + "px";
+    divel.style.left = 5+tempX + "px";
+    
+    return true;
+  }
+  document.onmousemove=positiontip 
+
+  -->
+  </script>
+
+
+  <style type="text/css"> 
+
+  #popup
+  {
+    display: none;
+    position:absolute;
+    z-index:1000;
+    border:1px solid #15131A;
+    background-color: #2F2D2E;
+    color: #CAC8BF;
+    padding:10px;
+    width:300px;
+    border-radius: 7px ; 
+    font-size: 0.75em;
+  }
+
+  button, select, input[type="text"]
+  {
+    font-size: 20px;
+  }
+
+  </style>
+
+</head>
+<body>
+<div id="popup"></div>
+
+  <div class="container">
+    <a href="../en/">Anglický jazyk / English language</a>
+    <div class="heading">
+      <h1 class="title">2048</h1>
+      <div class="scores-container">
+        <div class="score-container">0</div>
+        <div class="best-container">0</div>
+      </div>
+    </div>
+
+    <div class="above-game">
+      <p class="game-intro">Spájaj čísla a vytvor <strong>2048!</strong></p>
+      <a class="restart-button">Nová hra</a>
+    </div>
+
+    <div class="game-container">
+      <div class="game-message">
+        <p></p>
+        <div class="lower">
+	        <a class="keep-playing-button">Pokračovať</a>
+          <a class="retry-button">Skúsiť znovu</a>
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+        <div class="grid-row">
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+          <div class="grid-cell"></div>
+        </div>
+      </div>
+
+      <div class="tile-container">
+
+      </div>
+    </div>
+
+    <p class="game-explanation">
+      <strong class="important">Ako hrať:</strong> Pomocou <strong>klávesových šípiek</strong> pohybuj políčkami. Spojením dvoch políčok s rovnakým číslom vytvoríš nové, väčšie číslo.
+    </p>
+    <hr>
+    <p>
+      Táto hra je odvodená od pôvodnej verzie <a href="https://github.com/gabrielecirulli/2048" target="_blank">2048 vytvorenej Gabrielom Cirullim</a>.<br />
+      Táto verzia zaznamenáva priebeh hry pre neskoršiu analýzu.
+      Vytvoril <strong class="important">Ján Stibila</strong> na účely bakalárskeho projektu.
+    </p>
+  </div>
+
+  <script src="js/ajax_request_manager.js"></script>
+  <script src="js/bind_polyfill.js"></script>
+  <script src="js/classlist_polyfill.js"></script>
+  <script src="js/animframe_polyfill.js"></script>
+  <script src="js/keyboard_input_manager.js"></script>
+  <script src="js/html_actuator.js"></script>
+  <script src="js/grid.js"></script>
+  <script src="js/tile.js"></script>
+  <script src="js/local_storage_manager.js"></script>
+  <script src="js/game_manager.js"></script>
+  <script src="js/application.js"></script>
+</body>
+</html>

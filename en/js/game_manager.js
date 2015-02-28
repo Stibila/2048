@@ -100,8 +100,13 @@ GameManager.prototype.showPlayerSelector = function (playerList) {
   this.divPlayerSelector.id = 'SelectPlayer';
 
   this.p0 = document.createElement('p');
-  this.p0.innerHTML = 'This allow multiple players from same computer. Please, create only one player for a person.';
+  this.p1 = document.createElement('p');
+
+  this.p0.innerHTML = '<a href="../sk/">Slovak language / Slovenský jazyk</a>';
+  this.p1.innerHTML = 'This allow multiple players from same computer. Please, create only one player for a person.';
+
   this.divPlayerSelector.appendChild(this.p0);
+  this.divPlayerSelector.appendChild(this.p1);
 
   var that = this;
   playerList.forEach(function (player) {
@@ -219,7 +224,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p6.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
   this.p6.addEventListener('mouseout', function() {popdown();}, false);
 
-  this.p0.innerHTML = 'This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
+  this.p0.innerHTML = '<a href="../sk/">Slovak language / Slovenský jazyk</a><br />This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
   this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';
