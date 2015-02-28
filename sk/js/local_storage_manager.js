@@ -87,7 +87,7 @@ LocalStorageManager.prototype.getPlayers = function () {
 
     try {    
       var element = JSON.parse(this.storage.getItem(key));
-      if(element.grid) {
+      if(element.playerUUID) {
         players.push(key);
       }
     } catch (e) {
