@@ -399,7 +399,7 @@ GameManager.prototype.setup = function () {
   }
   else {
     gm.showWaiting("Wait a second, creating  new game");
-    ajaxManager = new AjaxManager();
+    var ajaxManager = new AjaxManager();
     ajaxManager.newGame(this.playerUUID);
   }
 };
@@ -433,7 +433,7 @@ GameManager.prototype.addRandomTile = function () {
 
 // Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
-  ajaxManager = new AjaxManager();
+  var ajaxManager = new AjaxManager();
   ajaxManager.newMove(this.serialize());
 
 
