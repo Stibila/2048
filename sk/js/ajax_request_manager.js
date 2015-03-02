@@ -1,5 +1,8 @@
 function AjaxManager() {
   this.timeout = 5000;
+  this.moveTimeout = 1000;
+  this.moveTries = 100;
+
   this.request = new XMLHttpRequest();
   try
   {
@@ -110,12 +113,12 @@ AjaxManager.prototype.newMove = function (gameState) {
   (function retry() {
     setTimeout(function() {
       that.request.abort();
-      if(!that.moveRecorded && that.tries < 10) {
+      if(!that.moveRecorded && that.tries < that.moveTries) {
         that.request.open("GET", "/server/?new=move&game="+encodeURIComponent(gameStateJSON), true);
         that.request.send();
         that.tries ++;
         retry();
       }
-    }, that.timeout);
+    }, that.moveTimeout);
   })();
 }
