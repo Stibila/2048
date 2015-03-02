@@ -217,7 +217,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p2.addEventListener('mouseout', function() {popdown();}, false);
   this.p3.addEventListener('mouseover', function() {popup('Your gender will be recorded for statistic purpose.');}, false);
   this.p3.addEventListener('mouseout', function() {popdown();}, false);
-  this.p4.addEventListener('mouseover', function() {popup('How much time you spend playing video games weekly?');}, false);
+  this.p4.addEventListener('mouseover', function() {popup('How much time do you spend playing video games weekly?');}, false);
   this.p4.addEventListener('mouseout', function() {popdown();}, false);
   this.p5.addEventListener('mouseover', function() {popup('Please, select game genres, that you play the most.');}, false);
   this.p5.addEventListener('mouseout', function() {popdown();}, false);
@@ -228,7 +228,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
   this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';
-  this.p4.innerHTML = '<b>How much time you spend playing videogames weekly:</b><br /><select name="weekly">' + 
+  this.p4.innerHTML = '<b>How much do time you spend playing videogames weekly:</b><br /><select name="weekly">' + 
                           '<option value="0">I don\'t play games</option>' +
                           '<option value="1">Less than 2 hours</option>' +
                           '<option value="2">Between 2-10 hours</option>' +
@@ -250,10 +250,10 @@ GameManager.prototype.showPlayerCreator = function () {
                           '</table>';
 
   this.p6.innerHTML = '<b>Your experience with 2048 game:</b><br /><select name="experience">' +
-                          '<option value="0">[0] I Never hear of it before.</option>' +
-                          '<option value="1">[1] I know it, but never played it.</option>' +
+                          '<option value="0">[0] I have never heard of it before.</option>' +
+                          '<option value="1">[1] I know it but I have never played it.</option>' +
                           '<option value="2">[2] I never made it to 2048.</option>' +
-                          '<option value="3">[3] I reached 2048 few times.</option>' +
+                          '<option value="3">[3] I reached 2048 a few times.</option>' +
                           '<option value="4">[4] I made it up to 4096 or 8192.</option> </select>';
 //  this.p3.innerHTML = '<b>Your experience with 2048:</b><br /><select name="experience"> <option value="0">0</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> </select>';
  

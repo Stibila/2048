@@ -79,8 +79,6 @@ LocalStorageManager.prototype.clearGameState = function (player) {
 LocalStorageManager.prototype.getPlayers = function () {
   var players = [];
 
-  this.storage.setItem('tralala', 'trololo');
-
   for(var key in this.storage) {
     var value = this.storage[key];
     var getType = {};    

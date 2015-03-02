@@ -94,7 +94,7 @@ function transform_grid($grid) {
 }
 
 function new_move($game) {
-
+	$ip = ip2long(get_client_ip());
 	$gameUUID = $game['gameUUID'];
 	$move = $game['move'];
 	$score = $game['score'];
@@ -108,13 +108,19 @@ function new_move($game) {
 	}
 
 	//get game ID
-	$stmt = $conn->prepare("SELECT id FROM game WHERE uuid=?");
+	$stmt = $conn->prepare("SELECT id, player_id FROM game WHERE uuid=?");
 	$stmt->bind_param("s", $gameUUID);
 	$stmt->execute();
-	$stmt->bind_result($game_id);
+	$stmt->bind_result($game_id, $player_id);
 	$stmt->fetch();
 	$stmt->close();
-
+	
+	//update players IP
+	$stmt = $conn->prepare("UPDATE player SET ip=? WHERE id=?;");
+        $stmt->bind_param("ii", $ip, $player_id);
+	$stmt->execute();
+	$stmt->fetch();
+	$stmt->close();
 
 	//check if same move exists
 	$stmt = $conn->prepare("SELECT * FROM move WHERE game_id = ? AND move = ?");
@@ -161,7 +167,8 @@ function new_move($game) {
 }
 
 function new_player($birth, $exp, $gender, $weekly, $genres) {
-	// Create connection
+	$ip = ip2long(get_client_ip());
+	// Create connecition
 	$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
 	// Check connection
@@ -188,7 +195,6 @@ function new_player($birth, $exp, $gender, $weekly, $genres) {
 	$stmt = $conn->prepare("INSERT INTO player (ip, user_agent, uuid, birth_year, experiences, gender, weekly, action, shooter, adventure, rpg, simulation, strategy, sport, logical) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 ");
 
-        $ip = ip2long(get_client_ip());
 	$gender = $gender[0];
 
         $g0 = ($genres['action'] ? 1 : 0);
