@@ -86,6 +86,8 @@ AjaxManager.prototype.newGame = function (playerUUID) {
 
 AjaxManager.prototype.newMove = function (gameState) {
   var gameStateJSON = JSON.stringify(gameState);
+  this.moveRecorded = false;
+  this.tries = 0;
 
   this.moveCreated = false;
   var that = this;
@@ -105,15 +107,19 @@ AjaxManager.prototype.newMove = function (gameState) {
       }
     }
   }
+
   this.request.open("GET", "/server/?new=move&game="+encodeURIComponent(gameStateJSON), true);
   this.request.send();
-  setTimeout(function() {
-                that.request.abort();
-                if(!that.moveCreated) {
-//                  gm.getGameUUID(null);
-//                  alert("An error has occured making the request to create move");
-                }
-    }, this.timeout);
-/**/
 
+  (function retry() {
+    setTimeout(function() {
+      that.request.abort();
+      if(!that.moveRecorded && that.tries < 10) {
+        that.request.open("GET", "/server/?new=move&game="+encodeURIComponent(gameStateJSON), true);
+        that.request.send();
+        that.tries ++;
+        retry();
+      }
+    }, that.timeout);
+  })();
 }
