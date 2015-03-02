@@ -224,7 +224,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p6.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
   this.p6.addEventListener('mouseout', function() {popdown();}, false);
 
-  this.p0.innerHTML = '<a href="../sk/">Slovak language / Slovenský jazyk</a><br />This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
+  this.p0.innerHTML = '<a href="../sk/">Slovak language / Slovenský jazyk</a><br /><strong class="important">For technical reasons, we are starting again. All data from before 2.3. was lost :(</strong><br />This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
   this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';

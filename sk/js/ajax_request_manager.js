@@ -38,19 +38,18 @@ AjaxManager.prototype.newPlayer = function (exp, birth, gender, weekly, genres) 
         gm.getPlayerUUID(that.request.responseText);
       }
       else{
-        alert("An error has occured making the request to create player");
+        alert("An error has occured making the request to create player. Try to refresh browser (F5)");
         gm.getPlayerUUID(null);
       }
     }
   }
-
   this.request.open("GET", "/server/?new=player&experience="+exp+"&birth_year="+birth+"&gender="+gender+"&weekly="+weekly+"&genres="+encodeURIComponent(genresJSON), true);
   this.request.send();
 
   setTimeout(function() {
                 that.request.abort();
                 if(!that.playerCreated) {
-                  alert("An error has occured making the request to create player");
+                  alert("An error has occured making the request to create player. Try to refresh browser (F5)");
                   gm.getPlayerUUID(null);   
                 }
     }, this.timeout);
@@ -68,17 +67,18 @@ AjaxManager.prototype.newGame = function (playerUUID) {
         gm.getGameUUID(that.request.responseText);
       }
       else{
-        alert("An error has occured making the request to create game");
+        alert("An error has occured making the request to create game. Try to refresh browser (F5)");
         gm.getPlayerUUID(null);
       }
     }
   }
+
   this.request.open("GET", "/server/?new=game&player="+playerUUID, true);
   this.request.send();
   setTimeout(function() {
                 that.request.abort();
                 if(!that.gameCreated) {
-                  alert("An error has occured making the request to create game");
+                  alert("An error has occured making the request to create game. Try to refresh browser (F5)");
                   gm.getGameUUID(null);
                 }
     }, this.timeout);
@@ -97,13 +97,9 @@ AjaxManager.prototype.newMove = function (gameState) {
     {
       if (that.request.status==200 || window.location.href.indexOf("http")==-1)
       {
-        that.moveCreated = true;
-//        gm.getGameUUID(that.request.responseText);
-//        alert("Move created. Response: " + that.request.responseText);
+        that.moveRecorded = true;
       }
       else{
-//        alert("An error has occured making the request to create move");
-//        gm.getPlayerUUID(null);
       }
     }
   }
