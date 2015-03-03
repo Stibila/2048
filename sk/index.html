@@ -58,6 +58,22 @@
   }
   document.onmousemove=positiontip 
 
+  function mail() {
+    document.write('<a href="mailto');
+    document.write(':');
+    document.write('jan');
+    document.write('@');
+    document.write('stibila');
+    document.write('.');
+    document.write('eu">');
+    document.write('jan');
+    document.write('@');
+    document.write('stibila');
+    document.write('.');
+    document.write('eu');
+    document.write('</a>');
+  }
+
   -->
   </script>
 
@@ -100,6 +116,11 @@
     </div>
 
     <div class="above-game">
+      <p>V prípade otázok, alebo ak zaznamenáš nejaké problémy, napíš mi na
+        <script type="text/javascript">
+          mail();
+        </script>
+      </p>
       <p class="game-intro">Spájaj čísla a vytvor <strong>2048!</strong></p>
       <a class="restart-button">Nová hra</a>
     </div>
@@ -156,16 +177,16 @@
     </p>
   </div>
 
-  <script src="js/ajax_request_manager.js"></script>
-  <script src="js/bind_polyfill.js"></script>
-  <script src="js/classlist_polyfill.js"></script>
-  <script src="js/animframe_polyfill.js"></script>
-  <script src="js/keyboard_input_manager.js"></script>
-  <script src="js/html_actuator.js"></script>
-  <script src="js/grid.js"></script>
-  <script src="js/tile.js"></script>
-  <script src="js/local_storage_manager.js"></script>
-  <script src="js/game_manager.js"></script>
-  <script src="js/application.js"></script>
+  <script src="js/ajax_request_manager.js?version=2"></script>
+  <script src="js/bind_polyfill.js?version=2"></script>
+  <script src="js/classlist_polyfill.js?version=2"></script>
+  <script src="js/animframe_polyfill.js?version=2"></script>
+  <script src="js/keyboard_input_manager.js?version=2"></script>
+  <script src="js/html_actuator.js?version=2"></script>
+  <script src="js/grid.js?version=2"></script>
+  <script src="js/tile.js?version=2"></script>
+  <script src="js/local_storage_manager.js?version=2"></script>
+  <script src="js/game_manager.js?version=2"></script>
+  <script src="js/application.js?version=2"></script>
 </body>
 </html>

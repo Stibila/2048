@@ -26,6 +26,32 @@ if(isset($_GET['new']))
 					$message = "Wrong params";
 				}
 				die($message);
+		case 'moves':
+				if(isset($_POST['gameMoves'])) {
+//file_put_contents('tralala', "mm: ".urldecode($_GET['minmax']) . "\n", FILE_APPEND);
+//file_put_contents('tralala', urldecode($_POST['gameMoves']) . "\n", FILE_APPEND);
+					$moves = json_decode(urldecode($_POST['gameMoves']), true);
+					$problem = false;
+					foreach($moves as $move) {
+						if(!new_move($move)){
+							$problem = true;
+						}						
+					}
+					if($problem) {
+						header("HTTP/1.1 409 Conflict");
+						$message = "Problem";
+					}
+					else {
+						header("HTTP/1.1 200 OK");
+						$message = "OK";
+					}
+				}
+				else {
+					header("HTTP/1.1 400 Bad Request");
+					$message = "Wrong params";
+				}
+				
+				die($message);
 		case 'move':
 				if(isset($_GET['game'])) {
 					$game = json_decode(urldecode($_GET['game']), true);

@@ -79,6 +79,7 @@ function new_move($game) {
 //	$ip = ip2long(get_client_ip());
 	$gameUUID = $game['gameUUID'];
 	$move = $game['move'];
+//file_put_contents('tralala', $move . "\n", FILE_APPEND);
 	$score = $game['score'];
 	$direction = $game['moveDirection'];
 	$timestamp = $game['timestamp'];
@@ -99,15 +100,6 @@ function new_move($game) {
 	$stmt->fetch();
 	$stmt->close();
 	
-	//update players IP
-/*
-	$stmt = $conn->prepare("UPDATE player SET ip=? WHERE id=?;");
-        $stmt->bind_param("ii", $ip, $player_id);
-	$stmt->execute();
-	$stmt->fetch();
-	$stmt->close();
-*/
-
 	//check if same move exists
 	$stmt = $conn->prepare("SELECT * FROM move WHERE game_id = ? AND move = ?");
 	$stmt->bind_param("ii", $game_id, $move);
@@ -147,6 +139,7 @@ function new_move($game) {
 	$stmt->execute();
 	$stmt->store_result();
 	$affected_rows = $stmt->affected_rows;
+//file_put_contents('tralala', "aff: $affected_rows" . "\n", FILE_APPEND);
 	$stmt->close();
 	$conn->close();
 	return ($affected_rows > 0);

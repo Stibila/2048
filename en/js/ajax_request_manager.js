@@ -1,7 +1,8 @@
 function AjaxManager() {
   this.timeout = 5000;
   this.moveTimeout = 1000;
-  this.moveTries = 100;
+  this.movesQueue = [];
+  this.ajaxInProgress = false;
 
   this.request = new XMLHttpRequest();
   try
@@ -31,14 +32,14 @@ function AjaxManager() {
 AjaxManager.prototype.newPlayer = function (exp, birth, gender, weekly, genres) {
   var genresJSON = JSON.stringify(genres);
   this.playerCreated = false;
-  var that = this;
+  var thatAjax = this;
   this.request.onreadystatechange = function(){
-    if (that.request.readyState == 4)
+    if (thatAjax.request.readyState == 4)
     {
-      if (that.request.status==200 || window.location.href.indexOf("http")==-1)
+      if (thatAjax.request.status==200 || window.location.href.indexOf("http")==-1)
       {
-        that.playerCreated = true;
-        gm.getPlayerUUID(that.request.responseText);
+        thatAjax.playerCreated = true;
+        gm.getPlayerUUID(thatAjax.request.responseText);
       }
       else{
         alert("An error has occured making the request to create player. Try to refresh browser (F5)");
@@ -50,8 +51,8 @@ AjaxManager.prototype.newPlayer = function (exp, birth, gender, weekly, genres) 
   this.request.send();
 
   setTimeout(function() {
-                that.request.abort();
-                if(!that.playerCreated) {
+                thatAjax.request.abort();
+                if(!thatAjax.playerCreated) {
                   alert("An error has occured making the request to create player. Try to refresh browser (F5)");
                   gm.getPlayerUUID(null);   
                 }
@@ -60,14 +61,14 @@ AjaxManager.prototype.newPlayer = function (exp, birth, gender, weekly, genres) 
 
 AjaxManager.prototype.newGame = function (playerUUID) {
   this.gameCreated = false;
-  var that = this;
+  var thatAjax = this;
   this.request.onreadystatechange = function() {
-    if (that.request.readyState == 4)
+    if (thatAjax.request.readyState == 4)
     {
-      if (that.request.status==200 || window.location.href.indexOf("http")==-1)
+      if (thatAjax.request.status==200 || window.location.href.indexOf("http")==-1)
       {
-        that.gameCreated = true;
-        gm.getGameUUID(that.request.responseText);
+        thatAjax.gameCreated = true;
+        gm.getGameUUID(thatAjax.request.responseText);
       }
       else{
         alert("An error has occured making the request to create game. Try to refresh browser (F5)");
@@ -79,46 +80,62 @@ AjaxManager.prototype.newGame = function (playerUUID) {
   this.request.open("GET", "/server/?new=game&player="+playerUUID, true);
   this.request.send();
   setTimeout(function() {
-                that.request.abort();
-                if(!that.gameCreated) {
+                thatAjax.request.abort();
+                if(!thatAjax.gameCreated) {
                   alert("An error has occured making the request to create game. Try to refresh browser (F5)");
                   gm.getGameUUID(null);
                 }
     }, this.timeout);
 }
 
-AjaxManager.prototype.newMove = function (gameState) {
-  var gameStateJSON = JSON.stringify(gameState);
-  this.moveRecorded = false;
-  this.tries = 0;
 
-  this.moveCreated = false;
-  var that = this;
+AjaxManager.prototype.startSendingMoves = function () {
+  this.ajaxInProgress = true;
+  var thatAjax = this;
+  this.movesRecorded = false;
 
-  this.request.onreadystatechange = function() {
-    if (that.request.readyState == 4)
-    {
-      if (that.request.status==200 || window.location.href.indexOf("http")==-1)
+  var sending = this.movesQueue;
+  this.movesQueue = [];
+
+  if(sending.length > 0) {
+    var gameStateArray = JSON.stringify(sending);
+
+    this.request.onreadystatechange = function() {
+      if (thatAjax.request.readyState == 4)
       {
-        that.moveRecorded = true;
-      }
-      else{
+        if (thatAjax.request.status==200 || window.location.href.indexOf("http")==-1)
+        {
+          thatAjax.movesRecorded = true;
+          clearInterval(thatAjax.retry);
+          thatAjax.startSendingMoves();
+        }
       }
     }
-  }
 
-  this.request.open("GET", "/server/?new=move&game="+encodeURIComponent(gameStateJSON), true);
-  this.request.send();
+    this.request.open("POST", "/server/?new=moves", true);
+    this.request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    this.request.send("gameMoves="+encodeURIComponent(gameStateArray));
 
-  (function retry() {
-    setTimeout(function() {
-      that.request.abort();
-      if(!that.moveRecorded && that.tries < that.moveTries) {
-        that.request.open("GET", "/server/?new=move&game="+encodeURIComponent(gameStateJSON), true);
-        that.request.send();
-        that.tries ++;
-        retry();
+    this.retry = setInterval(function() {
+      thatAjax.request.abort();
+      if(!thatAjax.moveRecorded) {
+        thatAjax.request.open("POST", "/server/?new=moves", true);
+        thatAjax.request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        thatAjax.request.send("gameMoves="+encodeURIComponent(gameStateArray));
       }
-    }, that.moveTimeout);
-  })();
+    }, thatAjax.moveTimeout);
+  }
+  else {
+    setTimeout(function() {
+        thatAjax.startSendingMoves();
+      }
+    , this.moveTimeout);
+  }
+}
+
+AjaxManager.prototype.newMove = function (gameState) {
+  this.movesQueue.push(gameState);
+  if(!this.ajaxInProgress) {
+    this.startSendingMoves();
+  }
 }

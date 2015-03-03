@@ -3,7 +3,7 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
-//  this.ajaxManager    = new AjaxManager;
+  this.ajaxManager    = new AjaxManager;
 
   this.startTiles     = 2;
 
@@ -224,7 +224,7 @@ GameManager.prototype.showPlayerCreator = function () {
   this.p6.addEventListener('mouseover', function() {popup('How many experience do you have with the 2048 game?');}, false);
   this.p6.addEventListener('mouseout', function() {popdown();}, false);
 
-  this.p0.innerHTML = '<a href="../sk/">Slovak language / Slovenský jazyk</a><br /><strong class="important">For technical reasons, we are starting again. All data from before 2.3. was lost :(</strong><br />This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
+  this.p0.innerHTML = '<a href="../sk/">Slovak language / Slovenský jazyk</a><br />This version of 2048 game was created for the purpose of my Bachelor thesis. Your gameplay will be recorded and analyze. Please, before you start, tell us something about You:';
   this.p1.innerHTML = '<b>Your name:</b><br /><input type="text" name="name" placeholder="Your Name" />';
   this.p2.innerHTML = '<b>Your birth year:</b><br /><select name="birth">'+ageOptions+'</select>';
   this.p3.innerHTML = '<b>Gender:</b><br /><select name="gender"> <option value="m">Male</option> <option value="f">Female</option> </select>';
@@ -433,9 +433,7 @@ GameManager.prototype.addRandomTile = function () {
 
 // Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
-  var ajaxManager = new AjaxManager();
-  ajaxManager.newMove(this.serialize());
-
+  this.ajaxManager.newMove(this.serialize());
 
   if (!this.bestScore || this.bestScore < this.score) {
     this.bestScore = this.score;
@@ -497,12 +495,6 @@ GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
 
-  //pri kazdom pohybe si zapiseme smer ktorym sa hybeme.
-  var moves = ['U','R','D','L'];
-  this.moveDirection = moves[direction];
-  this.move++;
-  this.timestamp = Date.now();
-
   if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
   var cell, tile;
@@ -551,6 +543,12 @@ GameManager.prototype.move = function (direction) {
   });
 
   if (moved) {
+    //pri kazdom pohybe si zapiseme smer ktorym sa hybeme.
+    var moves = ['U','R','D','L'];
+    this.moveDirection = moves[direction];
+    this.move++;
+    this.timestamp = Date.now();
+
     this.addRandomTile();
 
     if (!this.movesAvailable()) {
