@@ -85,6 +85,38 @@ CREATE TABLE IF NOT EXISTS `2048`.`move` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `2048`.`eyetracking`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `2048`.`eyetracking` (
+  `move_game_id` BIGINT NOT NULL,
+  `move_move` INT NOT NULL,
+  `hits` INT NOT NULL,
+  `hit_b1` VARCHAR(45) NULL,
+  `hit_b2` VARCHAR(45) NULL,
+  `hit_b3` VARCHAR(45) NULL,
+  `hit_b4` VARCHAR(45) NULL,
+  `hit_b5` VARCHAR(45) NULL,
+  `hit_b6` VARCHAR(45) NULL,
+  `hit_b7` VARCHAR(45) NULL,
+  `hit_b8` VARCHAR(45) NULL,
+  `hit_b9` VARCHAR(45) NULL,
+  `hit_b10` VARCHAR(45) NULL,
+  `hit_b11` VARCHAR(45) NULL,
+  `hit_b12` VARCHAR(45) NULL,
+  `hit_b13` VARCHAR(45) NULL,
+  `hit_b14` VARCHAR(45) NULL,
+  `hit_b15` VARCHAR(45) NULL,
+  `hit_b16` VARCHAR(45) NULL,
+  PRIMARY KEY (`move_game_id`, `move_move`),
+  CONSTRAINT `fk_eyetracking_move1`
+    FOREIGN KEY (`move_game_id` , `move_move`)
+    REFERENCES `2048`.`move` (`game_id` , `move`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
